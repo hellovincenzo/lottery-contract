@@ -15,18 +15,28 @@ contract Lottery {
     }
 
     function addPlayer(address payable newPlayer) public payable {
-        require(msg.value >= 0.01 ether, "Insufficient value sent");
+        require(msg.value >= 0.01 ether, "Insufficient fund");
         players.push(newPlayer);
     }
 
-    function pickWinner() public {
+    function pickWinner() public restricted {
         require(players.length > 0, "No players to pick a winner");
+        
 
         uint index = random() % players.length;
         address payable winner = players[index];
         winner.transfer(address(this).balance);
         
         // Optionally, reset the players array after picking a winner
-        delete players;
+        players = new address payable[](0);
+    }
+
+    modifier restricted() {
+        require(msg.sender == manager, "You are not the manager of the contract");
+        _;
+    }
+
+    function getPlayers() public view returns (address payable[] memory) {
+        return players;
     }
 }
