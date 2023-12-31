@@ -21,7 +21,6 @@ contract Lottery {
 
     function pickWinner() public restricted {
         require(players.length > 0, "No players to pick a winner");
-        
 
         uint index = random() % players.length;
         address payable winner = players[index];
